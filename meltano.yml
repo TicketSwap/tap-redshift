@@ -35,10 +35,10 @@ plugins:
       description: The name of the Redshift database
       kind: string
 
-    - name: schema
-      label: Schema
-      description: The schema to extract tables from
-      kind: string
+    - name: schemas
+      label: Schemas
+      description: The schemas to extract tables from
+      kind: array
 
     # Authentication settings
     - name: use_iam_authentication
@@ -91,6 +91,11 @@ plugins:
       label: S3 Key Prefix
       description: The S3 key prefix for UNLOAD operations
       kind: string
+    
+    - name: copy_role_arn
+      label: Copy Role ARN
+      description: The ARN of the IAM role that allows Redshift to access S3
+      kind: string
 
     # Schema conversion settings
     - name: dates_as_string
@@ -107,7 +112,12 @@ plugins:
     settings_group_validation:
     - [host, database]
 
+    config:
+      schemas: ["website"]
+
     # Default configuration values
+    select:
+      - "website-ad.*"
 
   loaders:
   - name: target-jsonl

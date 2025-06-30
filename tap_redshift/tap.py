@@ -38,11 +38,10 @@ class TapRedshift(SQLTap):
             description="The name of the Redshift database",
         ),
         th.Property(
-            "schema",
-            th.StringType(),
-            default="public",
-            title="Schema",
-            description="The schema to extract tables from",
+            "schemas",
+            th.ArrayType(th.StringType()),
+            title="Schemas",
+            description="The schemas to extract tables from",
         ),
         # Authentication settings
         th.Property(
@@ -76,6 +75,7 @@ class TapRedshift(SQLTap):
         th.Property(
             "aws_region",
             th.StringType(),
+            default="eu-west-1",
             title="AWS Region",
             description="The AWS region of the Redshift cluster",
         ),
@@ -98,13 +98,13 @@ class TapRedshift(SQLTap):
         th.Property(
             "s3_bucket",
             th.StringType(),
+            required=True,
             title="S3 Bucket",
             description="The S3 bucket to use for UNLOAD operations",
         ),
         th.Property(
             "s3_key_prefix",
             th.StringType(),
-            default="redshift-unload",
             title="S3 Key Prefix",
             description="The S3 key prefix for UNLOAD operations",
         ),
@@ -131,20 +131,6 @@ class TapRedshift(SQLTap):
             description="Whether to treat SUPER columns as objects instead of strings",
         ),
     ).to_dict()
-
-    def get_schema_names(self, engine, inspected) -> list[str]:
-        """Return a list of schema names in scope.
-
-        Args:
-            engine: SQLAlchemy engine
-            inspected: SQLAlchemy inspector
-
-        Returns:
-            List of schema names
-        """
-        # Use the configured schema or default to 'public'
-        schema_name = self.config.get("schema", "public")
-        return [schema_name]
 
 
 if __name__ == "__main__":
