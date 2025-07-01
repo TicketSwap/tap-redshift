@@ -1,0 +1,125 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: "tap-redshift"
+default_environment: test
+venv:
+  backend: uv
+environments:
+- name: test
+plugins:
+  extractors:
+  - name: "tap-redshift"
+    namespace: "tap_redshift"
+    pip_url: -e .
+    capabilities:
+    - state
+    - catalog
+    - discover
+    - about
+    - stream-maps
+
+    # Redshift connection settings
+    settings:
+    - name: host
+      label: Redshift Host
+      description: The hostname of the Redshift cluster
+      kind: string
+
+    - name: port
+      label: Port
+      description: The port of the Redshift cluster
+      kind: integer
+
+    - name: database
+      label: Database
+      description: The name of the Redshift database
+      kind: string
+
+    - name: schemas
+      label: Schemas
+      description: The schemas to extract tables from
+      kind: array
+
+    # Authentication settings
+    - name: use_iam_authentication
+      label: Use IAM Authentication
+      description: Whether to use IAM authentication instead of username/password
+      kind: boolean
+
+    - name: username
+      label: Username
+      description: The username for database authentication (required if not using IAM)
+      kind: string
+
+    - name: password
+      kind: password
+      label: Password
+      description: The password for database authentication (required if not using IAM)
+      sensitive: true
+
+    # IAM/Serverless settings
+    - name: cluster_identifier
+      label: Cluster Identifier
+      description: The cluster identifier (for provisioned clusters with IAM)
+      kind: string
+
+    # AWS credentials
+    - name: aws_region
+      label: AWS Region
+      description: The AWS region of the Redshift cluster
+      kind: string
+
+    # SSL settings
+    - name: ssl
+      label: Use SSL
+      description: Whether to use SSL for the connection
+      kind: boolean
+
+    - name: sslmode
+      label: SSL Mode
+      description: The SSL mode to use
+      kind: string
+
+    # S3 unload settings
+
+    - name: s3_bucket
+      label: S3 Bucket
+      description: The S3 bucket to use for UNLOAD operations
+      kind: string
+
+    - name: s3_key_prefix
+      label: S3 Key Prefix
+      description: The S3 key prefix for UNLOAD operations
+      kind: string
+    
+    - name: copy_role_arn
+      label: Copy Role ARN
+      description: The ARN of the IAM role that allows Redshift to access S3
+      kind: string
+
+    # Schema conversion settings
+    - name: dates_as_string
+      label: Dates as String
+      description: Whether to convert date/time columns to strings instead of date formats
+      kind: boolean
+
+    - name: super_as_object
+      label: SUPER as Object
+      description: Whether to treat SUPER columns as objects instead of strings
+      kind: boolean
+
+    # Settings group validation - require host and database
+    settings_group_validation:
+    - [host, database]
+
+    config:
+      schemas: ["website"]
+
+    # Default configuration values
+    select:
+      - "website-ad.*"
+
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl
