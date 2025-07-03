@@ -25,8 +25,8 @@ class TapRedshift(SQLTap):
         ),
         th.Property(
             "port",
-            th.IntegerType(),
-            default=5439,
+            th.StringType(),
+            default="5439",
             title="Port",
             description="The port of the Redshift cluster",
         ),
