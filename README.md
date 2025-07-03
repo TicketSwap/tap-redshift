@@ -26,7 +26,7 @@ pipx install git+https://github.com/tobiascadee/tap-redshift.git@main
 ```json
 {
   "host": "your-cluster.abc123.us-west-2.redshift.amazonaws.com",
-  "port": 5439,
+  "port": "5439",
   "database": "your_database",
   "schema": "public",
   "user": "your_username",

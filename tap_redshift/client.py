@@ -42,7 +42,7 @@ class RedshiftConnector(SQLConnector):
         connection_params = {
             "host": self.config["host"],
             "database": self.config["database"],
-            "port": self.config["port"],
+            "port": int(self.config["port"]),
             "ssl": self.config["ssl"],
             "sslmode": self.config["sslmode"],
             "iam": self.config["use_iam_authentication"],
