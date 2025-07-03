@@ -43,11 +43,12 @@ class RedshiftConnector(SQLConnector):
             "host": self.config["host"],
             "database": self.config["database"],
             "port": int(self.config["port"]),
+            "password": self.config.get("password"),
             "ssl": self.config["ssl"],
             "sslmode": self.config["sslmode"],
             "iam": self.config["use_iam_authentication"],
             "region": self.config["aws_region"],
-            "cluster_identifier": self.config["cluster_identifier"],
+            "cluster_identifier": self.config.get("cluster_identifier"),
             "db_user": self.config["username"],
             "user": self.config["username"],
         }
