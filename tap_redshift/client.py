@@ -473,7 +473,19 @@ class RedshiftStream(SQLStream):
             One dict per record.
         """
         self.logger.info("Reading CSV file %s", file_path)
-        records = pd.read_csv(file_path, encoding="utf-8", compression="gzip", low_memory=False, header=0)
+        # Redshift UNLOAD writes integers as floats in CSV — tell pandas the correct types upfront
+        dtype = {
+            col: "Int64"
+            for col, prop in self.schema.get("properties", {}).items()
+            if "integer" in (
+                [prop["type"]] if isinstance(prop.get("type"), str)
+                else prop.get("type", [])
+            )
+        }
+        records = pd.read_csv(
+            file_path, encoding="utf-8", compression="gzip", low_memory=False, header=0,
+            dtype=dtype,
+        )
         yield from records.to_dict(orient="records")
 
     def _cleanup_s3_files(self, s3_path: str) -> None:
