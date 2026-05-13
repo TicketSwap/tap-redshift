@@ -517,4 +517,10 @@ class RedshiftStream(SQLStream):
         """
         # Build base query
         selected_columns = [f'"{prop_name}"' for prop_name in self.schema["properties"]]
-        return f"SELECT {', '.join(selected_columns)} FROM {self.fully_qualified_name}"  # noqa: S608
+        # Avoid self.fully_qualified_name which requires a SQLAlchemy engine via
+        # connector._dialect — this tap bypasses SQLAlchemy (engine is always None).
+        catalog_entry = self._singer_catalog_entry
+        schema_name = catalog_entry.metadata.root.schema_name
+        table_name = catalog_entry.table
+        qualified_name = f'"{schema_name}"."{table_name}"'
+        return f"SELECT {', '.join(selected_columns)} FROM {qualified_name}"  # noqa: S608
